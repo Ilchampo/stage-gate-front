@@ -3,5 +3,5 @@
 </script>
 
 <div class="w-screnn flex h-screen">
-    <slot />
+	<slot />
 </div>

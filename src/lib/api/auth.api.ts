@@ -9,13 +9,23 @@ const BASE_API_URL = `${config.api}/auth`;
 
 const axios = getAxiosInstance(BASE_API_URL);
 
-export const signInApi = async (args: IAuthSignInArgs) => {
+export const signInApi = async (args: IAuthSignInArgs): Promise<ICustomResponse<string>> => {
 	try {
 		const response = await axios.post('/signin', args);
 
 		return response.data as ICustomResponse<string>;
 	} catch (error) {
 		return handleError(error) as ICustomResponse<string>;
+	}
+};
+
+export const validateCodeApi = async (code: string): Promise<ICustomResponse<boolean>> => {
+	try {
+		const response = await axios.post('/validate-code', { code });
+
+		return response.data as ICustomResponse<boolean>;
+	} catch (error) {
+		return handleError(error) as ICustomResponse<boolean>;
 	}
 };
 

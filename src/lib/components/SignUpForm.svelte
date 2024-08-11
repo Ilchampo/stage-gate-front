@@ -5,11 +5,17 @@
 	import { superForm } from 'sveltekit-superforms';
 
 	export let data;
+	export let disabled: boolean;
 
-	const { form, enhance, errors } = superForm(data);
+	const { form, enhance, errors } = superForm(data, {
+		resetForm: true,
+		dataType: 'json'
+	});
 
 	let showPassword = false;
 	let showConfirmPassword = false;
+
+	$: console.log($form)
 </script>
 
 <div class="w-full space-y-4 rounded-xl bg-white p-4 shadow-xl md:w-3/4">
@@ -19,7 +25,7 @@
 	</div>
 	<Hr />
 	<slot />
-	<form method="?/signup" class="flex flex-col gap-4" use:enhance>
+	<form method="POST" action="?/signup" class="flex flex-col gap-4" use:enhance>
 		<div class="flex w-full flex-col gap-4 md:flex-row">
 			<div class="w-full">
 				<Label for="email" class="mb-2">First name</Label>
@@ -32,6 +38,7 @@
 						color={$errors.firstname ? 'red' : undefined}
 						aria-invalid={$errors.firstname ? 'true' : undefined}
 						bind:value={$form.firstname}
+						{disabled}
 					/>
 				</ButtonGroup>
 				{#if $errors.firstname}
@@ -49,6 +56,7 @@
 						color={$errors.lastname ? 'red' : undefined}
 						aria-invalid={$errors.lastname ? 'true' : undefined}
 						bind:value={$form.lastname}
+						{disabled}
 					/>
 				</ButtonGroup>
 				{#if $errors.lastname}
@@ -70,6 +78,7 @@
 					color={$errors.email ? 'red' : undefined}
 					aria-invalid={$errors.email ? 'true' : undefined}
 					bind:value={$form.email}
+					{disabled}
 				/>
 			</ButtonGroup>
 			{#if $errors.email}
@@ -96,6 +105,7 @@
 					color={$errors.password ? 'red' : undefined}
 					aria-invalid={$errors.password ? 'true' : undefined}
 					bind:value={$form.password}
+					{disabled}
 				/>
 			</ButtonGroup>
 			{#if $errors.password}
@@ -122,14 +132,22 @@
 					color={$errors.confirmPassword ? 'red' : undefined}
 					aria-invalid={$errors.confirmPassword ? 'true' : undefined}
 					bind:value={$form.confirmPassword}
+					{disabled}
 				/>
 			</ButtonGroup>
 			{#if $errors.confirmPassword}
 				<Helper class="mt-2" color="red">{$errors.confirmPassword}</Helper>
 			{/if}
 		</div>
-		<Button type="submit" class="mt-4 w-full shadow-xl" disabled={!$form.email || !$form.password}
-			>Sign In</Button
+		<Button
+			type="submit"
+			class="mt-4 w-full shadow-xl"
+			disabled={disabled ||
+				!$form.firstname ||
+				!$form.lastname ||
+				!$form.email ||
+				!$form.password ||
+				!$form.confirmPassword}>Sign Up</Button
 		>
 	</form>
 	<Hr />

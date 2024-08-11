@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { ColorVariant } from 'flowbite-svelte';
+	
 	import { Toast } from 'flowbite-svelte';
 	import { fly } from 'svelte/transition';
 	import { onMount } from 'svelte';

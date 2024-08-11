@@ -6,7 +6,9 @@
 
 	export let data;
 
-	const { form, enhance, errors } = superForm(data);
+	const { form, enhance, errors } = superForm(data, {
+		resetForm: false
+	});
 
 	let showPassword = false;
 </script>

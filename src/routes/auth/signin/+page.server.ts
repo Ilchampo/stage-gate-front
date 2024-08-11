@@ -16,7 +16,7 @@ export const actions: Actions = {
 		}
 
 		const { email, password } = form.data;
-		
+
 		const response = await signInApi({ email, password });
 
 		if (response.error) {
