@@ -8,14 +8,12 @@
 	export let disabled: boolean;
 
 	const { form, enhance, errors } = superForm(data, {
-		resetForm: true,
+		resetForm: false,
 		dataType: 'json'
 	});
 
 	let showPassword = false;
 	let showConfirmPassword = false;
-
-	$: console.log($form)
 </script>
 
 <div class="w-full space-y-4 rounded-xl bg-white p-4 shadow-xl md:w-3/4">
@@ -135,8 +133,8 @@
 					{disabled}
 				/>
 			</ButtonGroup>
-			{#if $errors.confirmPassword}
-				<Helper class="mt-2" color="red">{$errors.confirmPassword}</Helper>
+			{#if $form.confirmPassword && $form.confirmPassword !== $form.password}
+				<Helper class="mt-2" color="red">Password does not match</Helper>
 			{/if}
 		</div>
 		<Button
@@ -147,12 +145,19 @@
 				!$form.lastname ||
 				!$form.email ||
 				!$form.password ||
-				!$form.confirmPassword}>Sign Up</Button
+				!$form.confirmPassword ||
+				$form.confirmPassword !== $form.password}>Sign Up</Button
 		>
 	</form>
 	<Hr />
 	<div class="flex justify-between text-xs font-light">
-		<span>Already have an account? <a href="/auth/signin">Sign In</a></span>
-		<span><a href="/auth/recover">Forgot password?</a></span>
+		<span
+			>Already have an account? <a href="/auth/signin" class="font-semibold text-secondary-500"
+				>Sign In</a
+			></span
+		>
+		<span
+			><a href="/auth/recover" class="font-semibold text-secondary-500">Forgot password?</a></span
+		>
 	</div>
 </div>

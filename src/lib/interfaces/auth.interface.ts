@@ -1,16 +1,32 @@
-import type { IUserCreateArgs } from '$lib/interfaces/user.interface';
-import type { IUserLoginCreateArgs } from '$lib/interfaces/userLogin.interface';
-
 export interface IAuthSignInArgs {
 	email: string;
 	password: string;
 }
 
-export interface IAuthSignUpArgs extends IUserCreateArgs, Omit<IUserLoginCreateArgs, 'userId'> {}
-
-export interface IAuthToken {
-	id: string;
+export interface IAuthSignUpArgs {
 	firstname: string;
 	lastname: string;
 	email: string;
+	password: string;
+	code: string;
+}
+
+export interface IAuthToken {
+	user: {
+		id: string;
+		firstname: string;
+		lastname: string;
+		email: string;
+	};
+	worskpace?: {
+		id: string;
+		role: string;
+	};
+	checks: {
+		onBoarding: boolean;
+		verifiedEmail: boolean;
+		privacyPolicy: boolean;
+	};
+	iat: number;
+	exp: number;
 }

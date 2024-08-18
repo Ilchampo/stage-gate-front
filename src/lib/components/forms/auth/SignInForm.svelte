@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { setLoaderStore } from '$lib/stores/loader.store';
 	import { Input, Label, Helper, ButtonGroup, InputAddon, Button, Hr } from 'flowbite-svelte';
 	import { EnvelopeSolid, EyeOutline, EyeSlashOutline } from 'flowbite-svelte-icons';
 
@@ -11,6 +12,12 @@
 	});
 
 	let showPassword = false;
+
+	const handleSubmit = async (event: Event) => {
+		setLoaderStore(true);
+		await enhance(event.currentTarget as HTMLFormElement);
+		setLoaderStore(false);
+	};
 </script>
 
 <div class="w-full space-y-4 rounded-xl bg-white p-4 shadow-xl md:w-3/4">
@@ -19,7 +26,7 @@
 		<span class="font-light">Enter your details below</span>
 	</div>
 	<Hr />
-	<form method="POST" class="flex flex-col gap-4" use:enhance>
+	<form method="POST" class="flex flex-col gap-4" on:submit={handleSubmit}>
 		<div>
 			<Label for="email" class="mb-2">Email</Label>
 			<ButtonGroup class="w-full">
@@ -72,7 +79,13 @@
 	</form>
 	<Hr />
 	<div class="flex justify-between text-xs font-light">
-		<span>Don't have an account yet? <a href="/auth/signup">Sign Up</a></span>
-		<span><a href="/auth/recover">Forgot password?</a></span>
+		<span
+			>Don't have an account yet? <a href="/auth/signup" class="font-semibold text-secondary-500"
+				>Sign Up</a
+			></span
+		>
+		<span
+			><a href="/auth/recover" class="font-semibold text-secondary-500">Forgot password?</a></span
+		>
 	</div>
 </div>

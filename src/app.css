@@ -1,3 +1,7 @@
 @import 'tailwindcss/base';
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
+
+.vertical-divider {
+	@apply mx-0 my-4 h-px w-full bg-surface-500 md:mx-4 md:my-0 md:h-full md:w-px;
+}

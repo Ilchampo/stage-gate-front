@@ -1,19 +1,20 @@
 <script lang="ts">
 	import type { ColorVariant } from 'flowbite-svelte';
-	
+
 	import { Toast } from 'flowbite-svelte';
 	import { fly } from 'svelte/transition';
 	import { onMount } from 'svelte';
+	import { MESSAGE_TOAST_TIMEOUT } from '$lib/constants/timeouts';
 
 	export let color: ColorVariant = 'red';
 	export let message: string;
 
-	let toastStatus = true;
+	export let toastStatus = true;
 
 	onMount(() => {
 		setTimeout(() => {
 			hideToast();
-		}, 5000);
+		}, MESSAGE_TOAST_TIMEOUT);
 	});
 
 	const hideToast = (): void => {

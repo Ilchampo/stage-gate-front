@@ -4,11 +4,18 @@ import { signInSchema } from '$lib/helpers/schemas';
 import { fail, superValidate } from 'sveltekit-superforms';
 import { signInApi } from '$lib/api/auth.api';
 import { yup } from 'sveltekit-superforms/adapters';
+import { redirect } from '@sveltejs/kit';
 
+import config from '$lib/config';
 import httpCodes from '$lib/constants/httpCodes';
 
+export const load: Load = async () => {
+	const form = await superValidate(yup(signInSchema));
+	return { form };
+};
+
 export const actions: Actions = {
-	default: async ({ request }) => {
+	default: async ({ request, cookies }) => {
 		const form = await superValidate(request, yup(signInSchema));
 
 		if (!form.valid) {
@@ -17,17 +24,23 @@ export const actions: Actions = {
 
 		const { email, password } = form.data;
 
-		const response = await signInApi({ email, password });
+		try {
+			const response = await signInApi({ email, password });
 
-		if (response.error) {
-			return fail(response.code, { form, error: response.error });
+			if (response.code !== httpCodes.OK || response.error || !response.data) {
+				return fail(response.code, { form, error: String(response.error) });
+			}
+
+			cookies.set('token', response.data, {
+				httpOnly: true,
+				path: '/',
+				secure: config.environment === 'production',
+				sameSite: 'strict'
+			});
+
+			return redirect(httpCodes.FOUND, '/');
+		} catch (error) {
+			return fail(httpCodes.INTERNAL_SERVER_ERROR, { form, error: error as string });
 		}
-
-		return { form, success: response.code };
 	}
-};
-
-export const load: Load = async () => {
-	const form = await superValidate(yup(signInSchema));
-	return { form };
 };

@@ -1,0 +1,1 @@
+export const MESSAGE_TOAST_TIMEOUT = 5000;

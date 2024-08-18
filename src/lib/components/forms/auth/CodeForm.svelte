@@ -8,7 +8,7 @@
 	export let data;
 
 	const { form, enhance, errors } = superForm(data, {
-		resetForm: false,
+		resetForm: false
 	});
 </script>
 
@@ -25,7 +25,11 @@
 		<div>
 			<Label class="mb-2" for="code">Invitation Code</Label>
 			<span class="text-xs font-light"
-				>Don't have a code? Click <a href="/">here</a> for more information</span
+				>Don't have a code? Click <a
+					href="/"
+					target="_blank"
+					class="font-semibold text-secondary-500">here</a
+				> for more information</span
 			>
 			<ButtonGroup class="w-full">
 				<Input

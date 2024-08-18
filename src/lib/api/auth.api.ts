@@ -1,5 +1,5 @@
 import type { ICustomResponse } from '$lib/interfaces/customResponse';
-import type { IAuthSignInArgs } from '$lib/interfaces/auth.interface';
+import type { IAuthSignInArgs, IAuthSignUpArgs } from '$lib/interfaces/auth.interface';
 
 import getAxiosInstance from '$lib/helpers/axiosInstance';
 import config from '$lib/config';
@@ -29,4 +29,22 @@ export const validateCodeApi = async (code: string): Promise<ICustomResponse<boo
 	}
 };
 
-// export const signUp = async (email: string, password: string) => {};
+export const signUpApi = async (args: IAuthSignUpArgs) => {
+	try {
+		const response = await axios.post('/signup', args);
+
+		return response.data as ICustomResponse<string>;
+	} catch (error) {
+		return handleError(error) as ICustomResponse<string>;
+	}
+};
+
+export const recoverPasswordApi = async (email: string): Promise<ICustomResponse<boolean>> => {
+	try {
+		const response = await axios.post('/recover-password', { email });
+
+		return response.data as ICustomResponse<boolean>;
+	} catch (error) {
+		return handleError(error) as ICustomResponse<boolean>;
+	}
+};

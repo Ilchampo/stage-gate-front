@@ -3,11 +3,11 @@ import type { Actions, ServerLoad } from '@sveltejs/kit';
 import { signUpSchema, validateCodeSchema } from '$lib/helpers/schemas';
 import { fail, superValidate } from 'sveltekit-superforms';
 import { yup } from 'sveltekit-superforms/adapters';
-import { validateCodeApi } from '$lib/api/auth.api';
+import { signUpApi, validateCodeApi } from '$lib/api/auth.api';
+import { redirect } from '@sveltejs/kit';
 
+import config from '$lib/config';
 import httpCodes from '$lib/constants/httpCodes';
-import { codeStore } from '$lib/stores/code.store';
-import { get } from 'svelte/store';
 
 export const load: ServerLoad = async () => {
 	const signUpForm = await superValidate(yup(signUpSchema));
@@ -17,24 +17,33 @@ export const load: ServerLoad = async () => {
 };
 
 export const actions: Actions = {
-	signup: async ({ request }) => {
+	signup: async ({ request, cookies }) => {
 		const signUpForm = await superValidate(request, yup(signUpSchema));
-		const code = get(codeStore);
 
-		if (!signUpForm.valid || !code) {
+		if (!signUpForm.valid) {
 			return fail(httpCodes.BAD_REQUEST, { signUpForm });
 		}
 
-		const { firstname, lastname, password } = signUpForm.data;
+		const { firstname, lastname, email, password, code } = signUpForm.data;
 
-		console.log(firstname, lastname, password, code);
-		// const response = await signUpApi({ firstname, lastname, password, code });
+		try {
+			const response = await signUpApi({ firstname, lastname, email, password, code });
 
-		// if (response.error) {
-		// 	return fail(response.code, { signUpForm });
-		// }
+			if (response.error || !response.data) {
+				return fail(response.code, { signUpForm });
+			}
 
-		// return { signUpForm, signUpSuccess: response.data };
+			cookies.set('token', response.data, {
+				httpOnly: true,
+				path: '/',
+				secure: config.environment === 'production',
+				sameSite: 'strict'
+			});
+
+			return redirect(httpCodes.FOUND, '/');
+		} catch (error) {
+			return fail(httpCodes.INTERNAL_SERVER_ERROR, { signUpForm, error: error as string });
+		}
 	},
 	code: async ({ request }) => {
 		const validateCodeForm = await superValidate(request, yup(validateCodeSchema));
@@ -44,12 +53,16 @@ export const actions: Actions = {
 		}
 
 		const { code } = validateCodeForm.data;
-		const response = await validateCodeApi(code);
+		try {
+			const response = await validateCodeApi(code);
 
-		if (response.error) {
-			return fail(response.code, { validateCodeForm });
+			if (response.error) {
+				return fail(response.code, { validateCodeForm });
+			}
+
+			return { validateCodeForm, codeSuccess: response.data, code };
+		} catch (error) {
+			return fail(httpCodes.INTERNAL_SERVER_ERROR, { validateCodeForm, error: error as string });
 		}
-
-		return { validateCodeForm, codeSuccess: response.data, code };
 	}
 };
