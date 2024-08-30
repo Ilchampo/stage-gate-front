@@ -11,7 +11,7 @@ export interface IAuthSignUpArgs {
 	code: string;
 }
 
-export interface IAuthToken {
+export interface IAuthTokenDecoded {
 	user: {
 		id: string;
 		firstname: string;
@@ -27,6 +27,6 @@ export interface IAuthToken {
 		verifiedEmail: boolean;
 		privacyPolicy: boolean;
 	};
-	iat: number;
-	exp: number;
+	iat?: number;
+	exp?: number;
 }

@@ -1,8 +1,16 @@
 import type { Handle } from '@sveltejs/kit';
+
+import { setUserStore, userStore } from '$lib/stores/user.store';
+import { get } from 'svelte/store';
 import { redirect } from '@sveltejs/kit';
 
 export const handle: Handle = async ({ event, resolve }) => {
 	const token = event.cookies.get('token');
+
+	if (token) {
+		setUserStore(token);
+		event.locals.user = get(userStore);
+	}
 
 	const protectedPaths = ['/dashboard', '/profile'];
 
